@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ezCloud Booking Engine</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: #003366;
+      color: #fff;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      z-index: 1001;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .menu-icon {
+      display: none;
+      cursor: pointer;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px 0;
+    }
+
+    .hero {
+      background: url('https://peridotgrandhotel.com/wp-content/uploads/2025/05/Banner-ngang-1968-03.jpg') no-repeat center;
+      background-size: cover;
+      height: 300px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero #container {
+      width: 100%;
+      /* max-width: 1000px; */
+      margin: 0 auto;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    footer {
+      background-color: #f1f1f1;
+      color: #333;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #back-index {
+      position: absolute;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      bottom: 5px;
+      right: 5px;
+      font-size: 14px;
+      display: flex;
+      padding: 10px 20px;
+      align-items: center;
+    }
+
+    #back-index button {
+      height: 38px;
+      border-radius: 3px;
+      padding: 0 5px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: #3b99f7;
+      color: white;
+      text-transform: uppercase;
+      align-items: center;
+      display: flex;
+    }
+
+    #back-index button:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        padding-left: 10px;
+      }
+
+      .logo {
+        display: none;
+      }
+
+      .menu-icon {
+        width: 30px;
+        height: 30px;
+        display: block;
+      }
+
+      nav ul {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 10px;
+        gap: 10px;
+      }
+
+      nav ul.show {
+        display: flex;
+      }
+
+      nav a {
+        padding: 10px 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">🏨 Công ty TNHH ezCloud</div>
+        <div class="menu-icon" onclick="toggleMenu()">
+          <!-- SVG hamburger icon -->
+          <svg width="30" height="30" viewBox="0 0 100 80" fill="#fff">
+            <rect width="100" height="10"></rect>
+            <rect y="30" width="100" height="10"></rect>
+            <rect y="60" width="100" height="10"></rect>
+          </svg>
+        </div>
+        <ul id="nav-menu">
+          <li><a href="#gioi-thieu">Hướng dẫn</a></li>
+          <li><a href="#phong">Tạo form</a></li>
+          <li><a href="#dich-vu">Hiển thị danh sách</a></li>
+          <li><a href="#lien-he">Liên hệ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div id="container"></div>
+    <div id="back-index">
+      <button name="backButton">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back-up-double">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M13 14l-4 -4l4 -4" />
+          <path d="M8 14l-4 -4l4 -4" />
+          <path d="M9 10h7a4 4 0 1 1 0 8h-1" />
+        </svg>
+        <span style="margin-left: 3px; margin-top: 2px;">Quay về trang chủ</span>
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div id="room-list"></div>
+  </div>
+  
+
+  <footer id="lien-he">
+    <p>&copy; 2025 CÔNG TY TNHH CÔNG NGHỆ EZCLOUD TOÀN CẦU. Địa chỉ: Tầng 8, Tòa nhà LADECO, Số 266 Đội Cấn, Ba Đình, Hà
+      Nội</p>
+    <p>Điện thoại: (Miền Bắc) 0983039419 | Email: marketing@ezcloud.vn</p>
+  </footer>
+  <!-- <script src="https://app.oneinventory.com/plugins/ezbe-embed-dev.js"></script> -->
+  <script src="https://phivanquang.github.io/embed/ezbe-embed.js"></script>
+  <script>
+    window.onload = function () {
+      const backIndx = document.getElementById('back-index');
+      const backBtn = backIndx.querySelector('button[name="backButton"]');
+      backBtn.addEventListener('click', function () {
+        const newFilename = 'index.html';
+        const baseFolder = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const newUrl = baseFolder + newFilename;
+        window.location.href = newUrl;
+      });
+    }
+
+    // Lấy URL môi trường từ localStorage và set global variable
+    const environmentUrl = localStorage.getItem('environmentUrl');
+    if (environmentUrl) {
+      window.EZ_BE_URL = environmentUrl;
+    }
+
+    window.initBookingEngine({
+      target: '#room-list',
+      scrollToTop: false,
+      marginTop: 60
+    });
+
+    function toggleMenu() {
+      const menu = document.getElementById('nav-menu');
+      menu.classList.toggle('show');
+    }
+  </script>
+</body>
+
+</html>
