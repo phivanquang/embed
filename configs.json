@@ -1,0 +1,12 @@
+{
+  "EZ_BE_URL": "https://dev-be.ezcms.vn",
+  "EZ_BE_DEFAULT_PATH": "https:/dev-be.ezcms.vn/hotel/BeDetailHotel",
+  "HOTEL_DEV": [
+    { "hotelName": "Khách sạn Ngọc Vũ", "hotelCode": "C4D429" },
+    { "hotelName": "ezCloud Apartment", "hotelCode": "QG0964" }
+  ],
+  "HOTEL_PROD": [
+    { "hotelName": "ezCloud Hotel Demo 1", "hotelCode": "73D328" },
+    { "hotelName": "ezCloud Hotel Demo 2", "hotelCode": "73D328" }
+  ]
+}

@@ -6,7 +6,7 @@
 const DEFAULT_EZ_BE_URL = 'https://booking.ezcms.vn'; //Đường dẫn mặc định lấy dữ liệu từ Booking Engine
 const DEFAULT_PATH = 'https://booking.ezcms.vn/hotel/BeDetailHotel'; //Đường dẫn mặc định đến trang sẽ hiển thị danh sách phòng khách sạn nếu khách sạn không cấu hình
 const EMBED_SCRIPT_NAME = 'ezbe-embed.js'; // Tên file nhúng
-const CONFIGS_SCRIPT_NAME = 'configs.js'; // Tên file configs đặt biến
+const CONFIGS_NAME = 'configs.json'; // Tên file configs đặt biến
 
 async function loadConfig() {
   if (typeof window.EZ_BE_URL !== 'undefined' && typeof window.EZ_BE_DEFAULT_PATH !== 'undefined') {
@@ -21,7 +21,7 @@ async function loadConfig() {
   }
 
   window.configLoadInProgress = true;
-  window.configLoadPromise = new Promise((resolve) => {
+  window.configLoadPromise = new Promise(async (resolve) => {
     let currentScript = window.document.currentScript;
     if (!currentScript || !currentScript.src) {
       const scripts = window.document.getElementsByTagName('script');
@@ -41,47 +41,23 @@ async function loadConfig() {
       });
     }
 
-    const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_SCRIPT_NAME);
-    const script = window.document.createElement('script');
-    script.src = configPath + '?v=' + Date.now();
-    script.async = false;
-    script.id = 'ezbe-configs-script';
+    const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_NAME) + "?v=" + Date.now();
 
-    script.onload = () => {
-      let attempts = 0;
-      const check = () => {
-        if (typeof window.EZ_BE_URL !== 'undefined' && typeof window.EZ_BE_DEFAULT_PATH !== 'undefined') {
-          cleanup();
-          resolve({
-            EZ_BE_URL: window.EZ_BE_URL,
-            EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH
-          });
-        } else if (++attempts < 20) {
-          setTimeout(check, 50);
-        } else {
-          cleanup();
-          resolve({
-            EZ_BE_URL: window.EZ_BE_URL || DEFAULT_EZ_BE_URL,
-            EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH || DEFAULT_PATH
-          });
-        }
-      };
-      check();
-    };
-
-    script.onerror = () => {
-      cleanup();
+    try {
+      const res = await fetch(configPath);
+      if (!res.ok) throw new Error("Config load failed");
+      const data = await res.json();
+      resolve({
+        EZ_BE_URL: data.EZ_BE_URL || DEFAULT_EZ_BE_URL,
+        EZ_BE_DEFAULT_PATH: data.EZ_BE_DEFAULT_PATH || DEFAULT_PATH
+      });
+    } catch (err) {
+      console.log('lỗi tùm lum: ', err);
       resolve({
         EZ_BE_URL: DEFAULT_EZ_BE_URL,
         EZ_BE_DEFAULT_PATH: DEFAULT_PATH
       });
-    };
-
-    window.document.head.appendChild(script);
-
-    function cleanup() {
-      const el = window.document.getElementById('ezbe-configs-script');
-      if (el && el.parentNode) el.parentNode.removeChild(el);
+    } finally {
       window.configLoadInProgress = false;
     }
   });
