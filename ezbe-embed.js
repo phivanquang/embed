@@ -885,15 +885,16 @@ async function loadConfig() {
               document.body.style.removeProperty('touchAction');
 
               window.removeEventListener('scroll', this.handleWindowScroll);
+              console.log('frame đã nhận chiều cao:', data.height);
               if (data.resize === false && !this.state.firstLoading) {
                 requestAnimationFrame(() => {
                   const rect = this.elements.iframe.getBoundingClientRect();
                   const scrollTop = window.scrollY + rect.top - marginTop;
                   window.scrollTo({ top: scrollTop, behavior: 'smooth' });
+                  console.log('frame gửi lại chiều cao cho web');
+                  this.sendScrollToIframe();
                 });
               }
-
-              sendScrollToIframe();
             }
             break;
 
@@ -1124,6 +1125,7 @@ async function loadConfig() {
       }
 
       sendScrollToIframe() {
+        console.log('..................sendScrollToIframe..................');
         const distance = Math.ceil(window.scrollY - this.state.initialOffsetTop);
         const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
         const viewportBottom = window.scrollY + window.innerHeight;
@@ -1140,6 +1142,7 @@ async function loadConfig() {
 
         this.state.scrollTimeout = setTimeout(() => {
           if (distance > 0 || bottomGap < 0) {
+            console.log(`..................scrollFromParent.................. scrollY: ${distance > 0 ? distance + marginTop : distance + marginTop > 0 ? distance + marginTop : 0} viewPort:  ${bottomGap > 0 ? 0 : bottomGap}`);
             this.postMessageToIframe({
               type: 'scrollFromParent',
               scrollY: distance > 0 ? distance + marginTop : distance + marginTop > 0 ? distance + marginTop : 0,
