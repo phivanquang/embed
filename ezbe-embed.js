@@ -892,6 +892,8 @@ async function loadConfig() {
                   window.scrollTo({ top: scrollTop, behavior: 'smooth' });
                 });
               }
+
+              sendScrollToIframe();
             }
             break;
 
