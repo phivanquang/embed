@@ -10,7 +10,11 @@
   const DEFAULT_IMAGE_ERROR_PATH = '';
 
   async function loadConfig() {
-    if (typeof window.EZ_BE_URL !== 'undefined' && typeof window.EZ_BE_DEFAULT_PATH !== 'undefined' && typeof window.IMAGE_ERROR_PATH !== 'undefined') {
+    if (
+      typeof window.EZ_BE_URL !== 'undefined' && 
+      typeof window.EZ_BE_DEFAULT_PATH !== 'undefined' && 
+      typeof window.IMAGE_ERROR_PATH !== 'undefined'
+    ) {
       return {
         EZ_BE_URL: window.EZ_BE_URL,
         EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH,
@@ -56,6 +60,8 @@
           IMAGE_ERROR_PATH:  data.IMAGE_ERROR_PATH || DEFAULT_IMAGE_ERROR_PATH,
         });
       } catch (err) {
+        console.log('đã xảy ra lỗi loading biến.');
+        console.log(err);
         resolve({
           EZ_BE_URL: DEFAULT_EZ_BE_URL,
           EZ_BE_DEFAULT_PATH: DEFAULT_PATH,
