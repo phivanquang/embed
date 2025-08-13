@@ -804,14 +804,11 @@
       showError(message, logs) {
         this.removeLoadingState();
 
+        const targetElement = document.querySelector(target);
+
         const errorContainer = document.createElement('div');
         errorContainer.className = 'booking-engine-error-message';
-        errorContainer.style.cssText = `
-          padding: 20px;
-          background-color: #fff;
-          text-align: center;
-          margin: 10px 0;
-        `;
+        
 
         // Hàm kiểm tra URL hợp lệ
         function isValidUrl(str) {
@@ -824,13 +821,25 @@
         }
 
         if (this.elements && this.elements.imageErrorPath && isValidUrl(this.elements.imageErrorPath)) {
+          errorContainer.style.cssText = `
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            padding: 0;
+            margin: 0 auto;
+          `;
           const img = document.createElement('img');
           img.src = this.elements.imageErrorPath;
           img.style.width = '100%';
-          img.style.height = '100%';
           img.alt = message || 'Error image';
           errorContainer.appendChild(img);
         } else {
+          errorContainer.style.cssText = `
+            padding: 20px;
+            background-color: #fff;
+            text-align: center;
+            margin: 10px 0;
+          `;
           errorContainer.style.color = '#ff0000';
           errorContainer.style.fontSize = '16px';
           errorContainer.style.fontWeight = 'bold';
@@ -838,6 +847,7 @@
         }
 
         if (this.target) {
+          this.target.innerHTML = '';
           this.target.appendChild(errorContainer);
         } else {
           document.body.appendChild(errorContainer);
