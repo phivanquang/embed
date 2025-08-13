@@ -667,7 +667,7 @@
         try {
           const config = await loadConfig();
           this.ezBeUrl = config.EZ_BE_URL;
-          this.elements.imageErrorPath = config.IMAGE_ERROR_PATH
+          this.elements.imageErrorPath = config.IMAGE_ERROR_PATH;
           this.validateUrlParams();
           this.createLoadingState();
           this.createIframe();
@@ -803,9 +803,6 @@
 
       showError(message, logs) {
         this.removeLoadingState();
-
-        const targetElement = document.querySelector(target);
-
         const errorContainer = document.createElement('div');
         errorContainer.className = 'booking-engine-error-message';
         
