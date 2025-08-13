@@ -543,15 +543,10 @@
 			const params = new URLSearchParams(window.location.search);
 			const testMod = params.get('mod') || null;
 			if (testMod && ['dev', 'uat', 'prod'].includes(testMod)) {
-				console.log('đã testMod');
 				try {
 					const res = await fetch(configPath);
-					console.log('đã lấy cấu hình');
-					console.log(res);
 					if(res.ok) {
 						const data = await res.json();
-						console.log('đã lấy data');
-						console.log(data);
 						switch(testMod) {
 							case 'dev':
 								sessionStorage.setItem('EZ_BE_URL', 'https://dev-be.ezcms.vn');
@@ -571,7 +566,6 @@
 							default:
 								break;
 						}
-						// Cập nhật lại UI ngay
 						renderHotelList();
 						window.initBookingForm(bookingOptions);
 					}
