@@ -897,6 +897,7 @@
                 this.sendScrollToIframe();
                 this.state.reloadPosition = false;
               }
+              this.sendParentInfo();
             }
             break;
 
@@ -1209,6 +1210,27 @@
           }
           this.state.hasSentHide = false;
         }, 300);
+      }
+
+      sendParentInfo() {
+        const distance = Math.ceil(window.scrollY - this.state.initialOffsetTop);
+        const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
+        const viewportBottom = window.scrollY + window.innerHeight;
+        const bottomGap = viewportBottom - iframeBottom;
+        const maxHeight = window.innerHeight;
+        const rect = this.elements.iframe.getBoundingClientRect();
+        const iframeTop = rect.top + window.scrollY;
+        const center = iframeTop - (window.innerHeight / 2) + (this.elements.iframe.offsetHeight / 2) - (this.marginTop / 2);
+
+        if (distance > 0 || bottomGap < 0) {
+          this.postMessageToIframe({
+            type: 'parentInfo',
+            scrollY: distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0,
+            viewPort: bottomGap > 0 ? 0 : bottomGap,
+            maxHeight: maxHeight,
+            center: center
+          });
+        }
       }
 
       throttle(func, limit) {
