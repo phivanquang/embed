@@ -554,18 +554,18 @@
 						console.log(data);
 						switch(testMod) {
 							case 'dev':
-								window.EZ_BE_URL = 'https://dev-be.ezcms.vn';
-								window.EZ_BE_DEFAULT_PATH = 'https://dev-be.ezcms.vn/hotel/BeDetailHotel';
+								sessionStorage.setItem('EZ_BE_URL', 'https://dev-be.ezcms.vn');
+								sessionStorage.setItem('EZ_BE_DEFAULT_PATH', 'https://dev-be.ezcms.vn/hotel/BeDetailHotel');
 								bookingOptions.hotel = data.HOTEL_DEV;
 								break;
 							case 'uat':
-								window.EZ_BE_URL = 'https://uat-be.ezcms.vn';
-								window.EZ_BE_DEFAULT_PATH = 'https://uat-be.ezcms.vn/hotel/BeDetailHotel';
+								sessionStorage.setItem('EZ_BE_URL', 'https://uat-be.ezcms.vn');
+								sessionStorage.setItem('EZ_BE_DEFAULT_PATH', 'https://uat-be.ezcms.vn/hotel/BeDetailHotel');
 								bookingOptions.hotel = data.HOTEL_UAT;
 								break;
 							case 'prod':
-								window.EZ_BE_URL = 'https://booking.ezcms.vn';
-								window.EZ_BE_DEFAULT_PATH = 'https://booking.ezcms.vn/hotel/BeDetailHotel';
+								sessionStorage.setItem('EZ_BE_URL', 'https://booking.ezcms.vn');
+								sessionStorage.setItem('EZ_BE_DEFAULT_PATH', 'https://booking.ezcms.vn/hotel/BeDetailHotel');
 								bookingOptions.hotel = data.HOTEL_PROD;
 								break;
 							default:

@@ -206,6 +206,15 @@
   </footer>
   <script src="https://phivanquang.github.io/embed/plugins/ezbe-embed.js"></script>
   <script>
+    const EZ_BE_URL = sessionStorage.getItem('EZ_BE_URL') || null;
+    const EZ_BE_DEFAULT_PATH = sessionStorage.getItem('EZ_BE_DEFAULT_PATH') || null;
+    if (EZ_BE_URL) {
+      window.EZ_BE_URL = EZ_BE_URL;
+    }
+    if (EZ_BE_DEFAULT_PATH) {
+      window.EZ_BE_DEFAULT_PATH = EZ_BE_DEFAULT_PATH;
+    }
+
     window.onload = function () {
       const backIndx = document.getElementById('back-index');
       const backBtn = backIndx.querySelector('button[name="backButton"]');
