@@ -885,16 +885,16 @@ async function loadConfig() {
               document.body.style.removeProperty('touchAction');
 
               window.removeEventListener('scroll', this.handleWindowScroll);
-              console.log('frame đã nhận chiều cao:', data.height);
+              console.log('frame đã nhận chiều cao:', data);
               if (data.resize === false && !this.state.firstLoading) {
                 requestAnimationFrame(() => {
                   const rect = this.elements.iframe.getBoundingClientRect();
                   const scrollTop = window.scrollY + rect.top - marginTop;
                   window.scrollTo({ top: scrollTop, behavior: 'smooth' });
-                  console.log('frame gửi lại chiều cao cho web');
-                  this.sendScrollToIframe();
                 });
               }
+              console.log('frame gửi lại chiều cao cho web');
+              this.sendScrollToIframe();
             }
             break;
 
