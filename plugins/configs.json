@@ -1,13 +1,13 @@
 {
-  "EZ_BE_URL": "https://dev-be.ezcms.vn",
-  "EZ_BE_DEFAULT_PATH": "https:/dev-be.ezcms.vn/hotel/BeDetailHotel",
+  "EZ_BE_URL": "https://booking.ezcms.vn",
+  "EZ_BE_DEFAULT_PATH": "https://booking.ezcms.vn/hotel/BeDetailHotel",
   "HOTEL_DEV": [
     { "hotelName": "Khách sạn Ngọc Vũ", "hotelCode": "C4D429" },
     { "hotelName": "ezCloud Apartment", "hotelCode": "QG0964" }
   ],
   "HOTEL_UAT": [
-    { "hotelName": "Vinpearl Luxury Đà Nẵng 4", "hotelCode": "KLA59E" },
-    { "hotelName": "Khách sạn Đông Nam Á", "hotelCode": "3219922" }
+    { "hotelName": "Bản Mòng Resort & Funfair", "hotelCode": "UW2451" },
+    { "hotelName": "Khách sạn Ngọc Minh Châu", "hotelCode": "0AQ48B" }
   ],
   "HOTEL_PROD": [
     { "hotelName": "ezCloud Hotel Demo 1", "hotelCode": "73D328" },

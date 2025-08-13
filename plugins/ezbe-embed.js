@@ -745,12 +745,10 @@
           .booking-engine-fixed-scroll {
             position: fixed;
             width: 100%;
-            /* Không set overflow: hidden để giữ nguyên thanh scrollbar */
           }
           .booking-engine-fixed-scroll-mobile {
             width: 100%;
             height: 100vh;
-            /* Không set overflow: hidden để giữ nguyên thanh scrollbar */
           }
           @keyframes booking-engine-spin { 
             to { transform: rotate(360deg); } 

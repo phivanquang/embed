@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ezCloud Booking Engine</title>
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  <title>Demo - Danh sách phòng khách sạn</title>
   <style>
     * {
       box-sizing: border-box;
@@ -20,12 +21,6 @@
     header {
       background-color: #003366;
       color: #fff;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      z-index: 1001;
     }
 
     nav {
@@ -58,15 +53,13 @@
       text-decoration: none;
       font-weight: bold;
     }
-
     .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 20px 0;
-    }
-
+			max-width: 1230px;
+			margin: auto;
+			padding: 20px 0;
+		}
     .hero {
-      background: url('https://peridotgrandhotel.com/wp-content/uploads/2025/05/Banner-ngang-1968-03.jpg') no-repeat center;
+      background: url('hotel_banner_demo.jpg') no-repeat center;
       background-size: cover;
       height: 300px;
       position: relative;
@@ -79,6 +72,11 @@
       width: 100%;
       /* max-width: 1000px; */
       margin: 0 auto;
+    }
+
+    .container {
+      max-width: 1230px;
+      margin: auto;
     }
 
     .section {
@@ -163,7 +161,7 @@
   <header>
     <div class="container">
       <nav>
-        <div class="logo">🏨 Công ty TNHH ezCloud</div>
+        <div class="logo">🏨 CÔNG TY TNHH CÔNG NGHỆ EZCLOUD TOÀN CẦU</div>
         <div class="menu-icon" onclick="toggleMenu()">
           <!-- SVG hamburger icon -->
           <svg width="30" height="30" viewBox="0 0 100 80" fill="#fff">
@@ -198,17 +196,15 @@
       </button>
     </div>
   </div>
-  <div class="container">
-    <div id="room-list"></div>
-  </div>
-  
+
+  <div id="room-list"></div>
 
   <footer id="lien-he">
     <p>&copy; 2025 CÔNG TY TNHH CÔNG NGHỆ EZCLOUD TOÀN CẦU. Địa chỉ: Tầng 8, Tòa nhà LADECO, Số 266 Đội Cấn, Ba Đình, Hà
       Nội</p>
     <p>Điện thoại: (Miền Bắc) 0983039419 | Email: marketing@ezcloud.vn</p>
   </footer>
-  <script src="https://phivanquang.github.io/embed/ezbe-embed.js"></script>
+  <script src="https://phivanquang.github.io/embed/plugins/ezbe-embed.js"></script>
   <script>
     window.onload = function () {
       const backIndx = document.getElementById('back-index');
@@ -220,23 +216,14 @@
         window.location.href = newUrl;
       });
     }
-
-    // Lấy URL môi trường từ localStorage và set global variable
-    const environmentUrl = localStorage.getItem('environmentUrl');
-    if (environmentUrl) {
-      window.EZ_BE_URL = environmentUrl;
-    }
-
     window.initBookingEngine({
       target: '#room-list',
       scrollToTop: false,
-      marginTop: 60
     });
-
     function toggleMenu() {
-      const menu = document.getElementById('nav-menu');
-      menu.classList.toggle('show');
-    }
+			const menu = document.getElementById('nav-menu');
+			menu.classList.toggle('show');
+		}
   </script>
 </body>
 

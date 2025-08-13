@@ -4,7 +4,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>ezCloud Booking Form</title>
+	<link rel="icon" href="./favicon.ico" type="image/x-icon">
+	<title>Hướng dẫn tích hợp Booking Engine vào website</title>
 	<style>
 		* {
 			box-sizing: border-box;
@@ -13,7 +14,7 @@
 		}
 
 		body {
-			font-family: 'Montserrat', sans-serif;
+			font-family: Arial, sans-serif;
 			line-height: 1.6;
 			padding: 5px;
 		}
@@ -55,7 +56,7 @@
 		}
 
 		.container {
-			max-width: 1000px;
+			max-width: 1230px;
 			margin: auto;
 			padding: 20px 0;
 		}
@@ -85,7 +86,7 @@
 		}
 
 		.hero {
-			background: url('https://peridotgrandhotel.com/wp-content/uploads/2025/05/Banner-ngang-1968-03.jpg') no-repeat center;
+			background: url('hotel_banner_demo.jpg') no-repeat center;
 			background-size: cover;
 			height: 300px;
 			position: relative;
@@ -96,13 +97,13 @@
 
 		.hero #container {
 			width: 100%;
-			max-width: 1000px;
+			max-width: 1230px;
 			margin: 0 auto;
 		}
 
 		#test-language {
 			width: 100%;
-			max-width: 1000px;
+			max-width: 1230px;
 			margin-bottom: 20px;
 			border: 1px solid #ccc;
 			border-radius: 5px;
@@ -218,7 +219,7 @@
 	<header>
 		<div class="container">
 			<nav>
-				<div class="logo">🏨 Công ty TNHH ezCloud</div>
+				<div class="logo">🏨 CÔNG TY TNHH CÔNG NGHỆ EZCLOUD TOÀN CẦU</div>
 				<div class="menu-icon" onclick="toggleMenu()">
 					<!-- SVG hamburger icon -->
 					<svg width="30" height="30" viewBox="0 0 100 80" fill="#fff">
@@ -245,7 +246,7 @@
 	<div class="container">
 		<div id="test-language">
 			<div class="change-hotel">
-				<button name="testOtherHotel">+ thêm khách sạn test</button>
+				<button name="testOtherHotel">+ Thêm khách sạn test</button>
 				<div class="isShow d-none">
 					<button name="addHotel">Lưu</button>
 					<input type="text" name="hotel_test_name" placeholder="Tên khách sạn">
@@ -261,22 +262,6 @@
 			</div>
 
 		</div>
-		<div style="display: grid; margin-bottom: 20px;">
-			<strong>Môi trường test</strong>
-			<div style="display: inline;padding-left: 10px;">
-				<input type="radio" name="environment-test" id="environment-localhost" value="develop" checked>
-				<label for="environment-localhost">Localhost</label>
-			</div>
-			<div style="display: inline;padding-left: 10px;">
-				<input type="radio" name="environment-test" id="environment-develop" value="develop">
-				<label for="environment-develop">Development</label>
-			</div>
-			<div style="display: inline;padding-left: 10px;">
-				<input type="radio" name="environment-test" id="environment-uat" value="uat">
-				<label for="environment-uat">UAT</label>
-			</div>
-		</div>
-		<hr style="margin: 20px 0;" />
 		<section id="gioi-thieu" class="section">
 			<h2>Hướng dẫn tích hợp Booking Engine vào website</h2>
 			<p>Chức năng này cho phép bạn tích hợp Booking Engine với website. Cụ thể là hiển thị form đặt phòng của Booking
@@ -291,11 +276,11 @@
 			<p>Tại trang web của khách sạn. tạo 1 thẻ tag để chứa mã html hiển thị form.</p>
 			<p>Đặt đoạn script mẫu dưới đây, đặt vào cuối thẻ body (trước thẻ đóng) </p>
 			<pre><code>
-				&lt;script src="https://app.oneinventory.com/plugins/ezbe-embed-dev.js"&gt;&lt;/script&gt;
+				&lt;script src="https://app.oneinventory.com/plugins/ezbe-embed.min.js"&gt;&lt;/script&gt;
 				&lt;script&gt;
 					&nbsp;&nbsp;window.initBookingForm({
 						&nbsp;&nbsp;&nbsp;&nbsp;hotel: [
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ hotelName: 'Khách sạn A', hotelCode: 'DFND3' },
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ hotelName: 'Khách sạn A', hotelCode: 'AFND' },
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ hotelName: 'Khách sạn B', hotelCode: 'BFKD' }
 						&nbsp;&nbsp;&nbsp;&nbsp;],
 						&nbsp;&nbsp;&nbsp;&nbsp;target: '#container',
@@ -382,7 +367,7 @@
 			<p>Tại trang hiển thị danh sách phòng của khách sạn. tạo 1 thẻ tag để chứa mã html hiển thị danh sách phòng.</p>
 			<p>Đặt đoạn script mẫu dưới đây, đặt vào cuối thẻ body (trước thẻ đóng) </p>
 			<pre><code>
-				&lt;script src="https://app.oneinventory.com/plugins/ezbe-embed-dev.js"&gt;&lt;/script&gt;
+				&lt;script src="https://app.oneinventory.com/plugins/ezbe-embed.min.js"&gt;&lt;/script&gt;
 				&lt;script&gt;
 					&nbsp;&nbsp;window.initBookingEngine({
 						&nbsp;&nbsp;&nbsp;&nbsp;target: '#room-list',
@@ -414,7 +399,7 @@
 							<td><code>scrollToTop</code></td>
 							<td><code>Boolean</code></td>
 							<td>❌</td>
-							<td>Nếu `true`, hiện nút "cuộn lên đầu" khi cuộn xuống >500px. Mặc định là false</td>
+							<td>Nếu `true`, hiện nút "cuộn lên đầu" khi cuộn xuống. Mặc định là false</td>
 						</tr>
 
 					</tbody>
@@ -428,68 +413,18 @@
 			Nội</p>
 		<p>Điện thoại: (Miền Bắc) 0983039419 | Email: marketing@ezcloud.vn</p>
 	</footer>
-	<script src="https://phivanquang.github.io/embed/ezbe-embed.js"></script>
+	<script src="https://phivanquang.github.io/embed/plugins/ezbe-embed.js"></script>
 	<script>
-		// Cấu hình môi trường
-		localStorage.removeItem('currentEnvironment');
-		localStorage.removeItem('environmentUrl');
-		const environmentConfig = {
-			localhost: {
-				url: 'http://172.16.3.117:8086',
-				hotels: [
-					{ hotelName: 'Khách sạn Ngọc Vũ', hotelCode: 'C4D429' },
-					{ hotelName: 'ezCloud Apartment', hotelCode: 'QG0964' },
-					{ hotelName: 'La Maison Dalat', hotelCode: 'GZ383E' },
-					{ hotelName: 'Khách sạn Folio', hotelCode: 'NU1148' },
-					
-				]
-			},
-			develop: {
-				url: 'https://dev-be.ezcms.vn',
-				hotels: [
-					{ hotelName: 'ezCloud Apartment', hotelCode: 'QG0964' },
-					{ hotelName: 'La Maison Dalat', hotelCode: 'GZ383E' },
-					{ hotelName: 'Khách sạn Folio', hotelCode: 'NU1148' },
-					{ hotelName: 'Khách sạn Ngọc Vũ', hotelCode: 'C4D429' }
-				]
-			},
-			uat: {
-				url: 'https://uat-be.ezcms.vn',
-				hotels: [
-					{ hotelName: 'Bản Mòng Resort & Funfair', hotelCode: 'UW2451' },
-					{ hotelName: 'Khách sạn Ngọc Minh Châu', hotelCode: '0AQ48B' }
-				]
-			}
+		const configPath = 'https://phivanquang.github.io/embed/plugins/configs.json';
+		const bookingOptions = {
+			hotel: [
+				{ hotelName: 'ezCloud Hotel Demo 1', hotelCode: '73D328' },
+				{ hotelName: 'ezCloud Hotel Demo 2', hotelCode: '73D328' }
+			],
+			target: '#container',
+			path: 'room-list.html',
+			lang: 'vi',
 		};
-
-		// Lưu trữ môi trường hiện tại vào localStorage
-		function saveEnvironment(env) {
-			localStorage.setItem('currentEnvironment', env);
-			localStorage.setItem('environmentUrl', environmentConfig[env].url);
-		}
-
-		// Lấy môi trường hiện tại từ localStorage
-		function getCurrentEnvironment() {
-			return localStorage.getItem('currentEnvironment') || 'localhost';
-		}
-
-		// Lấy URL môi trường hiện tại
-		function getEnvironmentUrl() {
-			return localStorage.getItem('environmentUrl') || environmentConfig.develop.url;
-		}
-
-		// Khởi tạo bookingOptions với môi trường hiện tại
-		function getBookingOptions() {
-			const currentEnv = getCurrentEnvironment();
-			return {
-				hotel: [...environmentConfig[currentEnv].hotels],
-				target: '#container',
-				path: '/embed/room-list.html',
-				lang: 'vi',
-			};
-		}
-
-		let bookingOptions = getBookingOptions();
 
 		function renderHotelList() {
 			const subLangDiv = document.querySelector('.sub-language');
@@ -540,49 +475,7 @@
 			}
 		}
 
-		window.onload = function () {
-			// Khởi tạo môi trường từ localStorage
-			const currentEnv = getCurrentEnvironment();
-			const localhostRadio = document.getElementById('environment-localhost');
-			const developRadio = document.getElementById('environment-develop');
-			const uatRadio = document.getElementById('environment-uat');
-
-			if (currentEnv === 'localhost') {
-				localhostRadio.checked = true;
-			} else if (currentEnv === 'develop') {
-				developRadio.checked = true;
-			} else {
-				uatRadio.checked = true;
-			}
-
-			// Xử lý chuyển đổi môi trường
-			localhostRadio.addEventListener('change', function () {
-				if (this.checked) {
-					saveEnvironment('localhost');
-					bookingOptions = getBookingOptions();
-					window.initBookingForm(bookingOptions);
-					renderHotelList();
-				}
-			});
-
-			developRadio.addEventListener('change', function () {
-				if (this.checked) {
-					saveEnvironment('develop');
-					bookingOptions = getBookingOptions();
-					window.initBookingForm(bookingOptions);
-					renderHotelList();
-				}
-			});
-
-			uatRadio.addEventListener('change', function () {
-				if (this.checked) {
-					saveEnvironment('uat');
-					bookingOptions = getBookingOptions();
-					window.initBookingForm(bookingOptions);
-					renderHotelList();
-				}
-			});
-
+		window.onload = async function () {
 			const languageList = [
 				{ text: 'Tiếng Việt', value: 'vi' },
 				{ text: 'Tiếng Anh', value: 'en' },
@@ -646,6 +539,38 @@
 					alert('Vui lòng nhập đầy đủ Tên và Mã khách sạn!');
 				}
 			})
+
+			const params = new URLSearchParams(window.location.search);
+			const testMod = params.get('mod') || null;
+			if (testMod && ['dev', 'uat', 'prod'].includes(testMod)) {
+				try {
+					const res = await fetch(configPath);
+					if(res.ok) {
+						const data = await res.json();
+						switch(testMod) {
+							case 'dev':
+								window.EZ_BE_URL = 'https://dev-be.ezcms.vn';
+								window.EZ_BE_DEFAULT_PATH = 'https://dev-be.ezcms.vn/hotel/BeDetailHotel';
+								bookingOptions.hotel = data.HOTEL_DEV;
+								break;
+							case 'uat':
+								window.EZ_BE_URL = 'https://uat-be.ezcms.vn';
+								window.EZ_BE_DEFAULT_PATH = 'https://uat-be.ezcms.vn/hotel/BeDetailHotel';
+								bookingOptions.hotel = data.HOTEL_UAT;
+								break;
+							case 'prod':
+								window.EZ_BE_URL = 'https://booking.ezcms.vn';
+								window.EZ_BE_DEFAULT_PATH = 'https://booking.ezcms.vn/hotel/BeDetailHotel';
+								bookingOptions.hotel = data.HOTEL_PROD;
+								break;
+							default:
+								break;
+						}
+					}
+				} catch (err) {
+
+				}
+			}
 		}
 
 		window.initBookingForm(bookingOptions);
