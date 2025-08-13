@@ -7,19 +7,15 @@
   const DEFAULT_PATH = 'https://booking.ezcms.vn/hotel/BeDetailHotel'; //Đường dẫn mặc định đến trang sẽ hiển thị danh sách phòng khách sạn nếu khách sạn không cấu hình
   const EMBED_SCRIPT_NAME = 'ezbe-embed.js'; // Tên file nhúng
   const CONFIGS_NAME = 'configs.json'; // Tên file configs đặt biến
-  const DEFAULT_IMAGE_ERROR_PATH = '';
 
   async function loadConfig() {
     if (
       typeof window.EZ_BE_URL !== 'undefined' && 
-      typeof window.EZ_BE_DEFAULT_PATH !== 'undefined' && 
-      typeof window.IMAGE_ERROR_PATH !== 'undefined'
+      typeof window.EZ_BE_DEFAULT_PATH !== 'undefined'
     ) {
-      console.log('đã có window. các biến');
       return {
         EZ_BE_URL: window.EZ_BE_URL,
-        EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH,
-        IMAGE_ERROR_PATH: window.IMAGE_ERROR_PATH
+        EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH
       };
     }
 
@@ -42,11 +38,9 @@
 
       if (!currentScript || !currentScript.src) {
         window.configLoadInProgress = false;
-        console.log('không tồn tại currentScript đã trả về mặc định.');
         return resolve({
           EZ_BE_URL: DEFAULT_EZ_BE_URL,
-          EZ_BE_DEFAULT_PATH: DEFAULT_PATH,
-          IMAGE_ERROR_PATH: DEFAULT_IMAGE_ERROR_PATH
+          EZ_BE_DEFAULT_PATH: DEFAULT_PATH
         });
       }
 
@@ -56,20 +50,14 @@
         const res = await fetch(configPath);
         if (!res.ok) throw new Error("Config load failed");
         const data = await res.json();
-        console.log('đã lấy được data và set biến.');
-        console.log(data);
         resolve({
           EZ_BE_URL: data.EZ_BE_URL || DEFAULT_EZ_BE_URL,
-          EZ_BE_DEFAULT_PATH: data.EZ_BE_DEFAULT_PATH || DEFAULT_PATH,
-          IMAGE_ERROR_PATH:  data.IMAGE_ERROR_PATH || DEFAULT_IMAGE_ERROR_PATH,
+          EZ_BE_DEFAULT_PATH: data.EZ_BE_DEFAULT_PATH || DEFAULT_PATH
         });
       } catch (err) {
-        console.log('đã xảy ra lỗi loading biến.');
-        console.log(err);
         resolve({
           EZ_BE_URL: DEFAULT_EZ_BE_URL,
-          EZ_BE_DEFAULT_PATH: DEFAULT_PATH,
-          IMAGE_ERROR_PATH: DEFAULT_IMAGE_ERROR_PATH,
+          EZ_BE_DEFAULT_PATH: DEFAULT_PATH
         });
       } finally {
         window.configLoadInProgress = false;
@@ -645,8 +633,7 @@
           scrollToTopBtn: null,
           parentUrl: null,
           params: null,
-          pathName: null,
-          imageErrorPath: '',
+          pathName: null
         };
 
         this.eventListeners = [];
@@ -677,12 +664,6 @@
         try {
           const config = await loadConfig();
           this.ezBeUrl = config.EZ_BE_URL;
-          this.elements.imageErrorPath = config.IMAGE_ERROR_PATH;
-
-          console.log('đã add biến cuối cùng:');
-          console.log(config);
-
-
           this.validateUrlParams();
           this.createLoadingState();
           this.createIframe();
@@ -816,11 +797,10 @@
         }
       }
 
-      showError(message, logs) {
+      async showError(message, logs) {
         this.removeLoadingState();
         const errorContainer = document.createElement('div');
         errorContainer.className = 'booking-engine-error-message';
-        
 
         // Hàm kiểm tra URL hợp lệ
         function isValidUrl(str) {
@@ -832,7 +812,29 @@
           }
         }
 
-        if (this.elements && this.elements.imageErrorPath && isValidUrl(this.elements.imageErrorPath)) {
+        //lấy ảnh lỗi.
+        let imgUrl = '';
+        let currentScript = window.document.currentScript;
+        if (!currentScript || !currentScript.src) {
+          const scripts = window.document.getElementsByTagName('script');
+          for (let s of scripts) {
+            if (s.src && s.src.endsWith(EMBED_SCRIPT_NAME)) {
+              currentScript = s;
+              break;
+            }
+          }
+        }
+
+        if (currentScript || currentScript.src) {
+          const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_NAME) + "?v=" + Date.now();
+          try {
+            const res = await fetch(configPath);
+            if (!res.ok) throw new Error("Config load failed");
+            const data = await res.json();
+           imgUrl = data.IMAGE_ERROR_PATH || null;
+          } catch (err) {} 
+        }
+        if (imgUrl && isValidUrl(imgUrl)) {
           errorContainer.style.cssText = `
             width: 100%;
             max-width: 500px;
@@ -841,7 +843,7 @@
             margin: 0 auto;
           `;
           const img = document.createElement('img');
-          img.src = this.elements.imageErrorPath;
+          img.src = imgUrl;
           img.style.width = '100%';
           img.alt = message || 'Error image';
           errorContainer.appendChild(img);
