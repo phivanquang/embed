@@ -5,6 +5,10 @@
     { "hotelName": "Khách sạn Ngọc Vũ", "hotelCode": "C4D429" },
     { "hotelName": "ezCloud Apartment", "hotelCode": "QG0964" }
   ],
+  "HOTEL_UAT": [
+    { "hotelName": "Vinpearl Luxury Đà Nẵng 4", "hotelCode": "KLA59E" },
+    { "hotelName": "Khách sạn Đông Nam Á", "hotelCode": "3219922" }
+  ],
   "HOTEL_PROD": [
     { "hotelName": "ezCloud Hotel Demo 1", "hotelCode": "73D328" },
     { "hotelName": "ezCloud Hotel Demo 2", "hotelCode": "73D328" }

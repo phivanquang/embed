@@ -3,67 +3,66 @@
  * Email: quangpv@ezcloud.vn
  */
 (function () {
-const DEFAULT_EZ_BE_URL = 'https://booking.ezcms.vn'; //Đường dẫn mặc định lấy dữ liệu từ Booking Engine
-const DEFAULT_PATH = 'https://booking.ezcms.vn/hotel/BeDetailHotel'; //Đường dẫn mặc định đến trang sẽ hiển thị danh sách phòng khách sạn nếu khách sạn không cấu hình
-const EMBED_SCRIPT_NAME = 'ezbe-embed.js'; // Tên file nhúng
-const CONFIGS_NAME = 'configs.json'; // Tên file configs đặt biến
+  const DEFAULT_EZ_BE_URL = 'https://booking.ezcms.vn'; //Đường dẫn mặc định lấy dữ liệu từ Booking Engine
+  const DEFAULT_PATH = 'https://booking.ezcms.vn/hotel/BeDetailHotel'; //Đường dẫn mặc định đến trang sẽ hiển thị danh sách phòng khách sạn nếu khách sạn không cấu hình
+  const EMBED_SCRIPT_NAME = 'ezbe-embed.js'; // Tên file nhúng
+  const CONFIGS_NAME = 'configs.json'; // Tên file configs đặt biến
 
-async function loadConfig() {
-  if (typeof window.EZ_BE_URL !== 'undefined' && typeof window.EZ_BE_DEFAULT_PATH !== 'undefined') {
-    return {
-      EZ_BE_URL: window.EZ_BE_URL,
-      EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH
-    };
-  }
+  async function loadConfig() {
+    if (typeof window.EZ_BE_URL !== 'undefined' && typeof window.EZ_BE_DEFAULT_PATH !== 'undefined') {
+      return {
+        EZ_BE_URL: window.EZ_BE_URL,
+        EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH
+      };
+    }
 
-  if (window.configLoadInProgress && window.configLoadPromise) {
-    return window.configLoadPromise;
-  }
+    if (window.configLoadInProgress && window.configLoadPromise) {
+      return window.configLoadPromise;
+    }
 
-  window.configLoadInProgress = true;
-  window.configLoadPromise = new Promise(async (resolve) => {
-    let currentScript = window.document.currentScript;
-    if (!currentScript || !currentScript.src) {
-      const scripts = window.document.getElementsByTagName('script');
-      for (let s of scripts) {
-        if (s.src && s.src.endsWith(EMBED_SCRIPT_NAME)) {
-          currentScript = s;
-          break;
+    window.configLoadInProgress = true;
+    window.configLoadPromise = new Promise(async (resolve) => {
+      let currentScript = window.document.currentScript;
+      if (!currentScript || !currentScript.src) {
+        const scripts = window.document.getElementsByTagName('script');
+        for (let s of scripts) {
+          if (s.src && s.src.endsWith(EMBED_SCRIPT_NAME)) {
+            currentScript = s;
+            break;
+          }
         }
       }
-    }
 
-    if (!currentScript || !currentScript.src) {
-      window.configLoadInProgress = false;
-      return resolve({
-        EZ_BE_URL: DEFAULT_EZ_BE_URL,
-        EZ_BE_DEFAULT_PATH: DEFAULT_PATH
-      });
-    }
+      if (!currentScript || !currentScript.src) {
+        window.configLoadInProgress = false;
+        return resolve({
+          EZ_BE_URL: DEFAULT_EZ_BE_URL,
+          EZ_BE_DEFAULT_PATH: DEFAULT_PATH
+        });
+      }
 
-    const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_NAME) + "?v=" + Date.now();
+      const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_NAME) + "?v=" + Date.now();
 
-    try {
-      const res = await fetch(configPath);
-      if (!res.ok) throw new Error("Config load failed");
-      const data = await res.json();
-      resolve({
-        EZ_BE_URL: data.EZ_BE_URL || DEFAULT_EZ_BE_URL,
-        EZ_BE_DEFAULT_PATH: data.EZ_BE_DEFAULT_PATH || DEFAULT_PATH
-      });
-    } catch (err) {
-      console.log('lỗi tùm lum: ', err);
-      resolve({
-        EZ_BE_URL: DEFAULT_EZ_BE_URL,
-        EZ_BE_DEFAULT_PATH: DEFAULT_PATH
-      });
-    } finally {
-      window.configLoadInProgress = false;
-    }
-  });
+      try {
+        const res = await fetch(configPath);
+        if (!res.ok) throw new Error("Config load failed");
+        const data = await res.json();
+        resolve({
+          EZ_BE_URL: data.EZ_BE_URL || DEFAULT_EZ_BE_URL,
+          EZ_BE_DEFAULT_PATH: data.EZ_BE_DEFAULT_PATH || DEFAULT_PATH
+        });
+      } catch (err) {
+        resolve({
+          EZ_BE_URL: DEFAULT_EZ_BE_URL,
+          EZ_BE_DEFAULT_PATH: DEFAULT_PATH
+        });
+      } finally {
+        window.configLoadInProgress = false;
+      }
+    });
 
-  return window.configLoadPromise;
-}
+    return window.configLoadPromise;
+  }
 
   /**
    * 1. hotel (bắt buộc)
@@ -87,7 +86,7 @@ async function loadConfig() {
    */
   window.initBookingForm = async function ({ hotel, target, path, lang, background, buttonBackground, buttonTextColor, textColor }) {
     if (!hotel || !Array.isArray(hotel)) return;
-   
+
     if (!path) {
       try {
         const config = await loadConfig();
@@ -607,6 +606,7 @@ async function loadConfig() {
         this.throttleMs = 100;
         this.scrollThreshold = 500;
         this.ezBeUrl = DEFAULT_EZ_BE_URL;
+        this.marginTop = marginTop;
         this.state = {
           isInitialized: false,
           isLoading: true,
@@ -618,6 +618,10 @@ async function loadConfig() {
           prevHeight: 0,
           isDisableScroller: false,
           isScrolling: false,
+          lockScrollHandler: null,
+          immediateLockHandler: null,
+          isScrollFixed: false,
+          reloadPosition: false
         };
 
         this.elements = {
@@ -639,8 +643,7 @@ async function loadConfig() {
           if (this.state.isDisableScroller) {
             const rect = this.elements.iframe.getBoundingClientRect();
             const iframeTop = rect.top + window.scrollY;
-            const center = iframeTop - (window.innerHeight / 2) + (this.elements.iframe.offsetHeight / 2) + 20;
-
+            const center = iframeTop - (window.innerHeight / 2) + (this.elements.iframe.offsetHeight / 2) - (this.marginTop / 2);
             if (typeof window.scrollTo === 'function') {
               try {
                 window.scrollTo({ top: center });
@@ -740,14 +743,14 @@ async function loadConfig() {
             animation: booking-engine-spin 1s linear infinite;
           }
           .booking-engine-fixed-scroll {
-            overflow: hidden;
             position: fixed;
             width: 100%;
+            /* Không set overflow: hidden để giữ nguyên thanh scrollbar */
           }
           .booking-engine-fixed-scroll-mobile {
-            overflow: hidden;
             width: 100%;
             height: 100vh;
+            /* Không set overflow: hidden để giữ nguyên thanh scrollbar */
           }
           @keyframes booking-engine-spin { 
             to { transform: rotate(360deg); } 
@@ -861,7 +864,7 @@ async function loadConfig() {
       handleMessage(data, scrollbarWidth) {
         switch (data.type) {
           case 'iframeLoadingStart':
-            this.postMessageToIframe({ type: 'parentUrl', parentUrl: this.elements.parentUrl, parentMarginTop: marginTop });
+            this.postMessageToIframe({ type: 'parentUrl', parentUrl: this.elements.parentUrl, parentMarginTop: this.marginTop });
             this.state.firstLoading = false;
             break;
 
@@ -878,23 +881,22 @@ async function loadConfig() {
               this.elements.iframe.style.height = `${data.resize === false ? window.innerHeight : data.height}px`;
               document.body.classList.remove('booking-engine-fixed-scroll');
               document.body.classList.remove('booking-engine-fixed-scroll-mobile');
-
-              document.body.style.removeProperty('paddingRight');
-              document.body.style.removeProperty('overflow');
-              document.body.style.removeProperty('top');
+              this.restoreScroll();
               document.body.style.removeProperty('touchAction');
+              document.body.style.removeProperty('top');
 
               window.removeEventListener('scroll', this.handleWindowScroll);
-              console.log('frame đã nhận chiều cao:', data);
               if (data.resize === false && !this.state.firstLoading) {
                 requestAnimationFrame(() => {
                   const rect = this.elements.iframe.getBoundingClientRect();
-                  const scrollTop = window.scrollY + rect.top - marginTop;
+                  const scrollTop = window.scrollY + rect.top - this.marginTop;
                   window.scrollTo({ top: scrollTop, behavior: 'smooth' });
                 });
               }
-              console.log('frame gửi lại chiều cao cho web');
-              this.sendScrollToIframe();
+              if (this.state.reloadPosition) {
+                this.sendScrollToIframe();
+                this.state.reloadPosition = false;
+              }
             }
             break;
 
@@ -918,14 +920,14 @@ async function loadConfig() {
               window.location.href = data.linkUrl;
             }
             break;
+          case 'reloadPosition':
+            this.state.reloadPosition = true;
+          break;
         }
       }
 
       handleDisableScroll(data, scrollbarWidth) {
         document.body.style.setProperty('touchAction', 'none');
-        if (scrollbarWidth) {
-          document.body.style.setProperty('paddingRight', `${scrollbarWidth}px`);
-        }
 
         const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
         let offset;
@@ -938,15 +940,15 @@ async function loadConfig() {
         this.postMessageToIframe({ type: 'maxHeightDialog', maxHeight });
 
         if (data.action === 'hideScrollOnly') {
-          document.body.style.setProperty('overflow', `hidden`, 'important');
+          this.preventScroll();
           return;
-        };
+        }
 
         const doFixScroll = () => {
           this.state.scrollY = window.scrollY;
           const rect = this.elements.iframe.getBoundingClientRect();
           const iframeTop = rect.top + window.scrollY;
-          const center = iframeTop - (window.innerHeight / 2) + (this.elements.iframe.offsetHeight / 2) - (marginTop / 2);
+          const center = iframeTop - (window.innerHeight / 2) + (this.elements.iframe.offsetHeight / 2) - (this.marginTop / 2);
 
           if (typeof window.scrollTo === 'function') {
             try {
@@ -957,7 +959,10 @@ async function loadConfig() {
           } else {
             window.scrollTo(0, center);
           }
+
           requestAnimationFrame(() => {
+            this.preventScroll();
+
             if (data.viewPort == 'PC') {
               document.body.classList.add('booking-engine-fixed-scroll');
             } else {
@@ -984,9 +989,60 @@ async function loadConfig() {
         }
       }
 
+      preventScroll() {
+        const lockScrollPosition = () => {
+          const rect = this.elements.iframe.getBoundingClientRect();
+          const iframeTop = rect.top + window.scrollY;
+          const center = iframeTop - (window.innerHeight / 2) + (this.elements.iframe.offsetHeight / 2) - (this.marginTop / 2);
+
+          if (window.scrollY !== center) {
+            requestAnimationFrame(() => {
+              window.scrollTo(0, center);
+            });
+          }
+        };
+
+        this.state.lockScrollHandler = lockScrollPosition;
+        window.addEventListener('scroll', lockScrollPosition, { passive: false });
+
+        const immediateLockScroll = (e) => {
+          const rect = this.elements.iframe.getBoundingClientRect();
+          const iframeTop = rect.top + window.scrollY;
+          const center = iframeTop - (window.innerHeight / 2) + (this.elements.iframe.offsetHeight / 2) - (this.marginTop / 2);
+
+          if (window.scrollY !== center) {
+            requestAnimationFrame(() => {
+              window.scrollTo(0, center);
+            });
+          }
+        };
+
+        this.state.immediateLockHandler = immediateLockScroll;
+        document.addEventListener('wheel', immediateLockScroll, { passive: true });
+        document.addEventListener('touchmove', immediateLockScroll, { passive: true });
+        this.state.isScrollFixed = true;
+      }
+
+      restoreScroll() {
+        if (this.state.lockScrollHandler) {
+          window.removeEventListener('scroll', this.state.lockScrollHandler);
+          this.state.lockScrollHandler = null;
+        }
+
+        if (this.state.immediateLockHandler) {
+          document.removeEventListener('wheel', this.state.immediateLockHandler);
+          document.removeEventListener('touchmove', this.state.immediateLockHandler);
+          this.state.immediateLockHandler = null;
+        }
+
+        document.body.classList.remove('prevent-scroll');
+        this.state.isScrollFixed = false;
+      }
+
       handleEnableScroll(data) {
-        document.body.style.paddingRight = '0';
+        this.restoreScroll();
         document.body.style.touchAction = '';
+
         if (data.viewPort == 'PC') {
           document.body.classList.remove('booking-engine-fixed-scroll');
         } else {
@@ -994,13 +1050,14 @@ async function loadConfig() {
         }
 
         if (data.action === 'hideScrollOnly') {
-          document.body.style.setProperty('overflow', `auto`, 'important');
           return;
         }
 
         requestAnimationFrame(() => {
           document.body.style.top = '';
-          window.scrollTo(0, this.state.scrollY);
+          if (this.state.scrollY > 0) {
+            window.scrollTo(0, this.state.scrollY);
+          }
           window.removeEventListener('scroll', this.handleWindowScroll);
         });
       }
@@ -1010,7 +1067,7 @@ async function loadConfig() {
           const iframeRect = this.elements.iframe.getBoundingClientRect();
           const distanceFromTopToBottomOfFrame = iframeRect.top + this.elements.iframe.offsetHeight;
           const maxHeight = Math.min(window.innerHeight, distanceFromTopToBottomOfFrame);
-          message.browserHeight = maxHeight - marginTop;
+          message.browserHeight = maxHeight - this.marginTop;
           this.elements.iframe.contentWindow.postMessage(message, this.origin);
         }
       }
@@ -1125,7 +1182,9 @@ async function loadConfig() {
       }
 
       sendScrollToIframe() {
-        console.log('..................sendScrollToIframe..................');
+        if (this.state.isScrollFixed) {
+          return;
+        }
         const distance = Math.ceil(window.scrollY - this.state.initialOffsetTop);
         const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
         const viewportBottom = window.scrollY + window.innerHeight;
@@ -1142,10 +1201,9 @@ async function loadConfig() {
 
         this.state.scrollTimeout = setTimeout(() => {
           if (distance > 0 || bottomGap < 0) {
-            console.log(`..................scrollFromParent.................. scrollY: ${distance > 0 ? distance + marginTop : distance + marginTop > 0 ? distance + marginTop : 0} viewPort:  ${bottomGap > 0 ? 0 : bottomGap}`);
             this.postMessageToIframe({
               type: 'scrollFromParent',
-              scrollY: distance > 0 ? distance + marginTop : distance + marginTop > 0 ? distance + marginTop : 0,
+              scrollY: distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0,
               viewPort: bottomGap > 0 ? 0 : bottomGap
             });
           }
@@ -1168,21 +1226,17 @@ async function loadConfig() {
 
       setupScrollListener() {
         const scrollHandler = () => {
-          // Đặt trạng thái scrolling thành true khi bắt đầu scroll
           this.state.isScrolling = true;
 
-          // Clear timeout cũ nếu có
           if (this.scrollEndTimeout) {
             clearTimeout(this.scrollEndTimeout);
           }
 
-          // Đặt timeout để reset trạng thái scrolling sau khi ngừng scroll
           this.scrollEndTimeout = setTimeout(() => {
             this.state.isScrolling = false;
-          }, 150); // Đợi 150ms sau khi ngừng scroll để xác định đã dừng
+          }, 150);
         };
 
-        // Thêm event listener cho scroll
         window.addEventListener('scroll', scrollHandler, { passive: true });
         this.eventListeners.push({ type: 'scroll', handler: scrollHandler, target: window });
       }
@@ -1205,13 +1259,11 @@ async function loadConfig() {
           this.elements.scrollToTopBtn.parentNode.removeChild(this.elements.scrollToTopBtn);
         }
 
-        document.body.style.removeProperty('paddingRight');
-        document.body.style.removeProperty('overflow');
+        this.restoreScroll();
+        document.body.style.touchAction = '';
         document.body.style.removeProperty('top');
-
         document.body.classList.remove('booking-engine-fixed-scroll');
         document.body.classList.remove('booking-engine-fixed-scroll-mobile');
-
         const style = document.getElementById('booking-engine-loading');
         if (style) style.remove();
 
