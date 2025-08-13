@@ -12,5 +12,6 @@
   "HOTEL_PROD": [
     { "hotelName": "ezCloud Hotel Demo 1", "hotelCode": "73D328" },
     { "hotelName": "ezCloud Hotel Demo 2", "hotelCode": "73D328" }
-  ]
+  ],
+  "IMAGE_ERROR_PATH": "https://phivanquang.github.io/embed/plugins/404.png"
 }
