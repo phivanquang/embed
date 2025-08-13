@@ -15,6 +15,7 @@
       typeof window.EZ_BE_DEFAULT_PATH !== 'undefined' && 
       typeof window.IMAGE_ERROR_PATH !== 'undefined'
     ) {
+      console.log('đã có window. các biến');
       return {
         EZ_BE_URL: window.EZ_BE_URL,
         EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH,
@@ -41,6 +42,7 @@
 
       if (!currentScript || !currentScript.src) {
         window.configLoadInProgress = false;
+        console.log('không tồn tại currentScript đã trả về mặc định.');
         return resolve({
           EZ_BE_URL: DEFAULT_EZ_BE_URL,
           EZ_BE_DEFAULT_PATH: DEFAULT_PATH,
@@ -54,6 +56,8 @@
         const res = await fetch(configPath);
         if (!res.ok) throw new Error("Config load failed");
         const data = await res.json();
+        console.log('đã lấy được data và set biến.');
+        console.log(data);
         resolve({
           EZ_BE_URL: data.EZ_BE_URL || DEFAULT_EZ_BE_URL,
           EZ_BE_DEFAULT_PATH: data.EZ_BE_DEFAULT_PATH || DEFAULT_PATH,
@@ -674,6 +678,11 @@
           const config = await loadConfig();
           this.ezBeUrl = config.EZ_BE_URL;
           this.elements.imageErrorPath = config.IMAGE_ERROR_PATH;
+
+          console.log('đã add biến cuối cùng:');
+          console.log(config);
+
+
           this.validateUrlParams();
           this.createLoadingState();
           this.createIframe();
