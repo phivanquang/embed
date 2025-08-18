@@ -371,7 +371,8 @@
 				&lt;script&gt;
 					&nbsp;&nbsp;window.initBookingEngine({
 						&nbsp;&nbsp;&nbsp;&nbsp;target: '#room-list',
-						&nbsp;&nbsp;&nbsp;&nbsp;scrollToTop: true
+						&nbsp;&nbsp;&nbsp;&nbsp;scrollToTop: true,
+						&nbsp;&nbsp;&nbsp;&nbsp;marginTop: 0
 					&nbsp;&nbsp;});
 				&lt;/script&gt;
 				</code></pre>
@@ -401,7 +402,12 @@
 							<td>❌</td>
 							<td>Nếu `true`, hiện nút "cuộn lên đầu" khi cuộn xuống. Mặc định là false</td>
 						</tr>
-
+						<tr>
+							<td><code>marginTop</code></td>
+							<td><code>Number</code></td>
+							<td>❌</td>
+							<td>Tạo khoảng cách với phía trên. Mục đích là tránh để nội dung bị che khuất bởi phần tử cố định phía trên. Ví dụ như website có header cố định</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
