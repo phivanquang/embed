@@ -533,13 +533,13 @@
 			})
 			try {
 					const u = new URL(window.location.href);
-					const configPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/configs.json')}?v=${Date.now()}`;
+					const configPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/configs.json')}`;
 					const res = await fetch(configPath);
 					if(res.ok) {
 						const data = await res.json();
 						bookingOptions.hotel = data.HOTEL_LIST;
 						const script = document.createElement("script");
-						script.src = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/ezbe-embed.js')}?v=${Date.now()}`;;
+						script.src = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/ezbe-embed.js')}`;
 						script.onload = () => {
 							renderHotelList();
 							window.initBookingForm(bookingOptions);

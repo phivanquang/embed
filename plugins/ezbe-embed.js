@@ -821,8 +821,8 @@
             const res = await fetch(configPath);
             if (!res.ok) throw new Error("Config load failed");
             const data = await res.json();
-           imgUrl = data.IMAGE_ERROR_PATH || null;
-          } catch (err) {} 
+            imgUrl = data.IMAGE_ERROR_PATH || null;
+          } catch (err) { }
         }
         if (imgUrl && isValidUrl(imgUrl)) {
           errorContainer.style.cssText = `
@@ -962,7 +962,7 @@
             break;
           case 'reloadPosition':
             this.state.reloadPosition = true;
-          break;
+            break;
         }
       }
 

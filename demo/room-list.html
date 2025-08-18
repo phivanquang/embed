@@ -217,7 +217,7 @@
 
       try {
         const u = new URL(window.location.href);
-				const embedPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/ezbe-embed.js')}?v=${Date.now()}`;
+				const embedPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/ezbe-embed.js')}`;
 				const script = document.createElement("script");
         script.src = embedPath;
         script.onload = () => {
