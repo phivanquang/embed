@@ -16,6 +16,9 @@
     window.configLoadInProgress = true;
     window.configLoadPromise = new Promise(async (resolve) => {
       let currentScript = window.document.currentScript;
+
+      console.log("currentScript.src", currentScript.src);
+
       if (!currentScript || !currentScript.src) {
         const scripts = window.document.getElementsByTagName('script');
         for (let s of scripts) {
