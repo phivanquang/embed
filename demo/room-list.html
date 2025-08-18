@@ -205,7 +205,6 @@
     <p>Điện thoại: (Miền Bắc) 0983039419 | Email: marketing@ezcloud.vn</p>
   </footer>
   <script>
-    const configPath = 'https://phivanquang.github.io/embed/plugins/configs.json' + "?v=" + Date.now();
     window.onload = async function () {
       const backIndx = document.getElementById('back-index');
       const backBtn = backIndx.querySelector('button[name="backButton"]');
@@ -217,6 +216,8 @@
       });
 
       try {
+        const u = new URL(window.location.href);
+				const configPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/configs.json')}?v=${Date.now()}`;
 				const res = await fetch(configPath);
 				if(res.ok) {
 					const data = await res.json();
