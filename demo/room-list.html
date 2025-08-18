@@ -217,21 +217,16 @@
 
       try {
         const u = new URL(window.location.href);
-				const configPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/configs.json')}?v=${Date.now()}`;
-				const res = await fetch(configPath);
-				if(res.ok) {
-					const data = await res.json();
-					const embedPath = data.EMBED_PATH;
-					const script = document.createElement("script");
-					script.src = embedPath;
-					script.onload = () => {
-						window.initBookingEngine({
-              target: '#room-list',
-              scrollToTop: false,
-            });
-					};
-					document.body.appendChild(script);
-				}
+				const embedPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/ezbe-embed.js')}?v=${Date.now()}`;
+				const script = document.createElement("script");
+        script.src = embedPath;
+        script.onload = () => {
+          window.initBookingEngine({
+            target: '#room-list',
+            scrollToTop: false,
+          });
+        };
+        document.body.appendChild(script);
 			} catch (err) {
 				console.error("Lỗi load configs.json:", err);
 			}
