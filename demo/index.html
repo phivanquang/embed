@@ -413,14 +413,9 @@
 			Nội</p>
 		<p>Điện thoại: (Miền Bắc) 0983039419 | Email: marketing@ezcloud.vn</p>
 	</footer>
-	<script src="https://phivanquang.github.io/embed/plugins/ezbe-embed.js"></script>
 	<script>
-		const configPath = 'https://phivanquang.github.io/embed/plugins/configs.json';
 		const bookingOptions = {
-			hotel: [
-				{ hotelName: 'ezCloud Hotel Demo 1', hotelCode: '73D328' },
-				{ hotelName: 'ezCloud Hotel Demo 2', hotelCode: '73D328' }
-			],
+			hotel: [],
 			target: '#container',
 			path: 'room-list.html',
 			lang: 'vi',
@@ -485,7 +480,6 @@
 				{ text: 'Tiếng Lào', value: 'lo' },
 				{ text: 'Tiếng Khmer', value: 'km' }
 			]
-
 			const container = document.getElementById('test-language');
 			const select = container.querySelector('select[name="language-test"]');
 			select.innerHTML = '';
@@ -504,8 +498,6 @@
 				window.initBookingForm(bookingOptions);
 			});
 
-			renderHotelList();
-
 			const changeHotelBtn = container.querySelector('button[name="testOtherHotel"]');
 			const isShowDiv = container.querySelector('.isShow');
 			const saveBtn = isShowDiv.querySelector('button[name="addHotel"]');
@@ -513,9 +505,6 @@
 			const inputCode = isShowDiv.querySelector('input[name="hotel_test_code"]');
 
 			changeHotelBtn.addEventListener('click', function () {
-				// isShowDiv.style.display = 'block';
-				// changeHotelBtn.style.display = 'none';
-
 				isShowDiv.classList.remove('d-none');
 				changeHotelBtn.classList.add('d-none');
 			});
@@ -528,9 +517,6 @@
 					bookingOptions.hotel.unshift({ hotelName: name, hotelCode: code });
 					inputName.value = '';
 					inputCode.value = '';
-					// isShowDiv.style.display = 'none';
-					// changeHotelBtn.style.display = 'block';
-
 					isShowDiv.classList.add('d-none');
 					changeHotelBtn.classList.remove('d-none');
 					window.initBookingForm(bookingOptions);
@@ -539,43 +525,25 @@
 					alert('Vui lòng nhập đầy đủ Tên và Mã khách sạn!');
 				}
 			})
-
-			const params = new URLSearchParams(window.location.search);
-			const testMod = params.get('mod') || null;
-			if (testMod && ['dev', 'uat', 'prod'].includes(testMod)) {
-				try {
+			try {
+					const configPath = (window.location.origin + window.location.pathname.replace(/[^/]+\.html$/, '').replace(/\/$/, '') + "/plugins/configs.json") + "?v=" + Date.now();
 					const res = await fetch(configPath);
 					if(res.ok) {
 						const data = await res.json();
-						switch(testMod) {
-							case 'dev':
-								sessionStorage.setItem('EZ_BE_URL', 'https://dev-be.ezcms.vn');
-								sessionStorage.setItem('EZ_BE_DEFAULT_PATH', 'https://dev-be.ezcms.vn/hotel/BeDetailHotel');
-								bookingOptions.hotel = data.HOTEL_DEV;
-								break;
-							case 'uat':
-								sessionStorage.setItem('EZ_BE_URL', 'https://uat-be.ezcms.vn');
-								sessionStorage.setItem('EZ_BE_DEFAULT_PATH', 'https://uat-be.ezcms.vn/hotel/BeDetailHotel');
-								bookingOptions.hotel = data.HOTEL_UAT;
-								break;
-							case 'prod':
-								sessionStorage.setItem('EZ_BE_URL', 'https://booking.ezcms.vn');
-								sessionStorage.setItem('EZ_BE_DEFAULT_PATH', 'https://booking.ezcms.vn/hotel/BeDetailHotel');
-								bookingOptions.hotel = data.HOTEL_PROD;
-								break;
-							default:
-								break;
-						}
-						renderHotelList();
-						window.initBookingForm(bookingOptions);
+						bookingOptions.hotel = data.HOTEL_LIST;
+						const embedPath = data.EMBED_PATH;
+						const script = document.createElement("script");
+						script.src = embedPath;
+						script.onload = () => {
+							renderHotelList();
+							window.initBookingForm(bookingOptions);
+						};
+						document.body.appendChild(script);
 					}
 				} catch (err) {
-
+					console.error("Lỗi load configs.json:", err);
 				}
-			}
 		}
-
-		window.initBookingForm(bookingOptions);
 
 		function toggleMenu() {
 			const menu = document.getElementById('nav-menu');

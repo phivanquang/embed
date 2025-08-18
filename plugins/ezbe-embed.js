@@ -9,16 +9,6 @@
   const CONFIGS_NAME = 'configs.json'; // Tên file configs đặt biến
 
   async function loadConfig() {
-    if (
-      typeof window.EZ_BE_URL !== 'undefined' && 
-      typeof window.EZ_BE_DEFAULT_PATH !== 'undefined'
-    ) {
-      return {
-        EZ_BE_URL: window.EZ_BE_URL,
-        EZ_BE_DEFAULT_PATH: window.EZ_BE_DEFAULT_PATH
-      };
-    }
-
     if (window.configLoadInProgress && window.configLoadPromise) {
       return window.configLoadPromise;
     }
