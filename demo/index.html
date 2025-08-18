@@ -538,9 +538,8 @@
 					if(res.ok) {
 						const data = await res.json();
 						bookingOptions.hotel = data.HOTEL_LIST;
-						const embedPath = data.EMBED_PATH;
 						const script = document.createElement("script");
-						script.src = embedPath;
+						script.src = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/ezbe-embed.js')}?v=${Date.now()}`;;
 						script.onload = () => {
 							renderHotelList();
 							window.initBookingForm(bookingOptions);
