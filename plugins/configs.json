@@ -1,4 +1,5 @@
 {
+  "EMBED_PATH": "https://phivanquang.github.io/embed/plugins/ezbe-embed.js", 
   "EZ_BE_URL": "https://dev-be.ezcms.vn",
   "EZ_BE_DEFAULT_PATH": "https://dev-be.ezcms.vn/hotel/BeDetailHotel",
   "HOTEL_LIST": [
