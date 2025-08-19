@@ -946,7 +946,7 @@
             break;
           case 'reloadPosition':
             this.state.reloadPosition = true;
-          break;
+            break;
         }
       }
 
@@ -962,7 +962,7 @@
         }
         const maxHeight = window.innerHeight - offset;
         this.postMessageToIframe({ type: 'maxHeightDialog', maxHeight });
-
+        this.sendHeaderCartPosition();
         if (data.action === 'hideScrollOnly') {
           this.preventScroll();
           return;
@@ -994,23 +994,6 @@
             }
 
             document.body.style.setProperty('top', `-${center}px`, 'important');
-
-
-            //bổ sung vị trí header và giỏ hàng
-            const distance = Math.ceil(window.scrollY - this.state.initialOffsetTop);
-            const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
-            const viewportBottom = window.scrollY + window.innerHeight;
-            const bottomGap = viewportBottom - iframeBottom;
-
-            if (distance > 0 || bottomGap < 0) {
-              this.postMessageToIframe({
-                type: 'scrollFromParent',
-                scrollY: distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0,
-                viewPort: bottomGap > 0 ? 0 : bottomGap
-              });
-            }
-
-
             window.addEventListener('scroll', this.handleWindowScroll);
           });
         };
@@ -1099,23 +1082,8 @@
           if (this.state.scrollY > 0) {
             window.scrollTo(0, this.state.scrollY);
           }
-
-          //bổ sung vị trí header và giỏ hàng
-          const distance = Math.ceil(window.scrollY - this.state.initialOffsetTop);
-          const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
-          const viewportBottom = window.scrollY + window.innerHeight;
-          const bottomGap = viewportBottom - iframeBottom;
-
-          if (distance > 0 || bottomGap < 0) {
-            this.postMessageToIframe({
-              type: 'scrollFromParent',
-              scrollY: distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0,
-              viewPort: bottomGap > 0 ? 0 : bottomGap
-            });
-          }
-
-
           window.removeEventListener('scroll', this.handleWindowScroll);
+          this.sendHeaderCartPosition(this.state.scrollY);
         });
       }
 
@@ -1258,10 +1226,12 @@
 
         this.state.scrollTimeout = setTimeout(() => {
           if (distance > 0 || bottomGap < 0) {
+            const scrollY = Math.ceil(distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0);
+            const viewPort = Math.ceil(bottomGap > 0 ? 0 : bottomGap);
             this.postMessageToIframe({
               type: 'scrollFromParent',
-              scrollY: distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0,
-              viewPort: bottomGap > 0 ? 0 : bottomGap
+              scrollY,
+              viewPort
             });
           }
           this.state.hasSentHide = false;
@@ -1300,6 +1270,29 @@
             setTimeout(() => inThrottle = false, limit);
           }
         };
+      }
+
+      sendHeaderCartPosition(scrollY = null) {
+        let position = scrollY;
+        if (!position) {
+          const rect = this.elements.iframe.getBoundingClientRect();
+          const iframeTop = rect.top + window.scrollY;
+          position = iframeTop - (window.innerHeight / 2) + (this.elements.iframe.offsetHeight / 2) - (this.marginTop / 2);
+        }
+        const distance = Math.ceil(position - this.state.initialOffsetTop);
+        const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
+        const viewportBottom = position + window.innerHeight;
+        const bottomGap = viewportBottom - iframeBottom;
+
+        if (distance > 0 || bottomGap < 0) {
+          const scrollY = Math.ceil(distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0);
+          const viewPort = Math.ceil(bottomGap > 0 ? 0 : bottomGap);
+          this.postMessageToIframe({
+            type: 'scrollFromParent',
+            scrollY,
+            viewPort
+          });
+        }
       }
 
       setupScrollListener() {
