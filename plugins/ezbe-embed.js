@@ -35,7 +35,7 @@
         });
       }
 
-      const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_NAME) + "?v=" + Date.now();
+      const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_NAME);
       const imageUrl = currentScript.src.replace(/\/plugins\/.*$/, '/images/404.png');
       try {
         const res = await fetch(configPath);
@@ -808,7 +808,7 @@
         }
 
         //lấy ảnh lỗi.
-        if (this.elements.IMAGE_404_URL && isValidUrl(this.elements.IMAGE_404_URL)) {
+        if (this.elements.imageUrl && isValidUrl(this.elements.imageUrl)) {
           errorContainer.style.cssText = `
             width: 100%;
             max-width: 500px;
@@ -817,7 +817,7 @@
             margin: 0 auto;
           `;
           const img = document.createElement('img');
-          img.src = this.elements.IMAGE_404_URL;
+          img.src = this.elements.imageUrl;
           img.style.width = '100%';
           img.alt = message || 'Error image';
           errorContainer.appendChild(img);
