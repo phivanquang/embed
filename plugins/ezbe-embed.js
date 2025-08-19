@@ -994,6 +994,23 @@
             }
 
             document.body.style.setProperty('top', `-${center}px`, 'important');
+
+
+            //bổ sung vị trí header và giỏ hàng
+            const distance = Math.ceil(window.scrollY - this.state.initialOffsetTop);
+            const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
+            const viewportBottom = window.scrollY + window.innerHeight;
+            const bottomGap = viewportBottom - iframeBottom;
+
+            if (distance > 0 || bottomGap < 0) {
+              this.postMessageToIframe({
+                type: 'scrollFromParent',
+                scrollY: distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0,
+                viewPort: bottomGap > 0 ? 0 : bottomGap
+              });
+            }
+
+
             window.addEventListener('scroll', this.handleWindowScroll);
           });
         };
@@ -1082,6 +1099,22 @@
           if (this.state.scrollY > 0) {
             window.scrollTo(0, this.state.scrollY);
           }
+
+          //bổ sung vị trí header và giỏ hàng
+          const distance = Math.ceil(window.scrollY - this.state.initialOffsetTop);
+          const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
+          const viewportBottom = window.scrollY + window.innerHeight;
+          const bottomGap = viewportBottom - iframeBottom;
+
+          if (distance > 0 || bottomGap < 0) {
+            this.postMessageToIframe({
+              type: 'scrollFromParent',
+              scrollY: distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0,
+              viewPort: bottomGap > 0 ? 0 : bottomGap
+            });
+          }
+
+
           window.removeEventListener('scroll', this.handleWindowScroll);
         });
       }
