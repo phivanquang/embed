@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="./favicon.ico" type="image/x-icon">
+	<link rel="icon" href="./images/favicon.ico" type="image/x-icon">
 	<title>Hướng dẫn tích hợp Booking Engine vào website</title>
 	<style>
 		* {
@@ -86,7 +86,7 @@
 		}
 
 		.hero {
-			background: url('hotel_banner_demo.jpg') no-repeat center;
+			background: url('./images/hotel_banner_demo.jpg') no-repeat center;
 			background-size: cover;
 			height: 300px;
 			position: relative;
@@ -533,13 +533,14 @@
 			})
 			try {
 					const u = new URL(window.location.href);
-					const configPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/configs.json')}`;
+					const basePath = u.pathname.replace(/\/[^/]*$/, '');
+					const configPath = `${u.origin}${basePath}/plugins/configs.json`;
 					const res = await fetch(configPath);
 					if(res.ok) {
 						const data = await res.json();
 						bookingOptions.hotel = data.HOTEL_LIST;
 						const script = document.createElement("script");
-						script.src = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/ezbe-embed.js')}`;
+						script.src = `${u.origin}${basePath}/plugins/ezbe-embed.js`;
 						script.onload = () => {
 							renderHotelList();
 							window.initBookingForm(bookingOptions);

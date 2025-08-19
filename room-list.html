@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
   <title>Demo - Danh sách phòng khách sạn</title>
   <style>
     * {
@@ -59,7 +59,7 @@
 			padding: 20px 0;
 		}
     .hero {
-      background: url('hotel_banner_demo.jpg') no-repeat center;
+      background: url('./images/hotel_banner_demo.jpg') no-repeat center;
       background-size: cover;
       height: 300px;
       position: relative;
@@ -217,9 +217,9 @@
 
       try {
         const u = new URL(window.location.href);
-				const embedPath = `${u.origin}${u.pathname.replace(/\/demo\/.*$/, '/plugins/ezbe-embed.js')}`;
+				const basePath = u.pathname.replace(/\/[^/]*$/, '');
 				const script = document.createElement("script");
-        script.src = embedPath;
+        script.src = `${u.origin}${basePath}/plugins/ezbe-embed.js`;
         script.onload = () => {
           window.initBookingEngine({
             target: '#room-list',

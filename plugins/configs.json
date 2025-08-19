@@ -4,6 +4,5 @@
   "HOTEL_LIST": [
     { "hotelName": "Khách sạn Ngọc Vũ", "hotelCode": "C4D429" },
     { "hotelName": "ezCloud Apartment", "hotelCode": "QG0964" }
-  ],
-  "IMAGE_ERROR_PATH": "https://phivanquang.github.io/embed/plugins/404.png"
+  ]
 }

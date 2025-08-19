@@ -30,24 +30,27 @@
         window.configLoadInProgress = false;
         return resolve({
           EZ_BE_URL: DEFAULT_EZ_BE_URL,
-          EZ_BE_DEFAULT_PATH: DEFAULT_PATH
+          EZ_BE_DEFAULT_PATH: DEFAULT_PATH,
+          IMAGE_404_URL: ''
         });
       }
 
       const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_NAME) + "?v=" + Date.now();
-
+      const imageUrl = currentScript.src.replace(/\/plugins\/.*$/, '/images/404.png');
       try {
         const res = await fetch(configPath);
         if (!res.ok) throw new Error("Config load failed");
         const data = await res.json();
         resolve({
           EZ_BE_URL: data.EZ_BE_URL || DEFAULT_EZ_BE_URL,
-          EZ_BE_DEFAULT_PATH: data.EZ_BE_DEFAULT_PATH || DEFAULT_PATH
+          EZ_BE_DEFAULT_PATH: data.EZ_BE_DEFAULT_PATH || DEFAULT_PATH,
+          IMAGE_404_URL: imageUrl || ''
         });
       } catch (err) {
         resolve({
           EZ_BE_URL: DEFAULT_EZ_BE_URL,
-          EZ_BE_DEFAULT_PATH: DEFAULT_PATH
+          EZ_BE_DEFAULT_PATH: DEFAULT_PATH,
+          IMAGE_404_URL: imageUrl || ''
         });
       } finally {
         window.configLoadInProgress = false;
@@ -623,7 +626,8 @@
           scrollToTopBtn: null,
           parentUrl: null,
           params: null,
-          pathName: null
+          pathName: null,
+          imageUrl: '',
         };
 
         this.eventListeners = [];
@@ -654,6 +658,7 @@
         try {
           const config = await loadConfig();
           this.ezBeUrl = config.EZ_BE_URL;
+          this.elements.imageUrl = config.IMAGE_404_URL;
           this.validateUrlParams();
           this.createLoadingState();
           this.createIframe();
@@ -803,28 +808,7 @@
         }
 
         //lấy ảnh lỗi.
-        let imgUrl = '';
-        let currentScript = window.document.currentScript;
-        if (!currentScript || !currentScript.src) {
-          const scripts = window.document.getElementsByTagName('script');
-          for (let s of scripts) {
-            if (s.src && s.src.endsWith(EMBED_SCRIPT_NAME)) {
-              currentScript = s;
-              break;
-            }
-          }
-        }
-
-        if (currentScript || currentScript.src) {
-          const configPath = currentScript.src.replace(/[^\/]+$/, CONFIGS_NAME) + "?v=" + Date.now();
-          try {
-            const res = await fetch(configPath);
-            if (!res.ok) throw new Error("Config load failed");
-            const data = await res.json();
-            imgUrl = data.IMAGE_ERROR_PATH || null;
-          } catch (err) { }
-        }
-        if (imgUrl && isValidUrl(imgUrl)) {
+        if (this.elements.IMAGE_404_URL && isValidUrl(this.elements.IMAGE_404_URL)) {
           errorContainer.style.cssText = `
             width: 100%;
             max-width: 500px;
@@ -833,7 +817,7 @@
             margin: 0 auto;
           `;
           const img = document.createElement('img');
-          img.src = imgUrl;
+          img.src = this.elements.IMAGE_404_URL;
           img.style.width = '100%';
           img.alt = message || 'Error image';
           errorContainer.appendChild(img);
@@ -962,7 +946,7 @@
             break;
           case 'reloadPosition':
             this.state.reloadPosition = true;
-            break;
+          break;
         }
       }
 
