@@ -611,6 +611,7 @@
           scrollY: 0,
           initialOffsetTop: 0,
           scrollTimeout: null,
+          verifyTimeout: null,
           prevHeight: 0,
           isDisableScroller: false,
           isScrolling: false,
@@ -1233,6 +1234,7 @@
               scrollY,
               viewPort
             });
+            this.scheduleScrollVerify({ scrollY, viewPort });
           }
           this.state.hasSentHide = false;
         }, 300);
@@ -1292,7 +1294,35 @@
             scrollY,
             viewPort
           });
+          this.scheduleScrollVerify({ scrollY, viewPort }, position);
         }
+      }
+
+      computeScrollParams(position = null) {
+        const base = position == null ? window.scrollY : position;
+        const distance = Math.ceil(base - this.state.initialOffsetTop);
+        const iframeBottom = this.state.initialOffsetTop + this.elements.iframe.offsetHeight;
+        const viewportBottom = (position == null ? window.scrollY : position) + window.innerHeight;
+        const bottomGap = viewportBottom - iframeBottom;
+        const scrollY = Math.ceil(distance > 0 ? distance + this.marginTop : distance + this.marginTop > 0 ? distance + this.marginTop : 0);
+        const viewPort = Math.ceil(bottomGap > 0 ? 0 : bottomGap);
+        return { scrollY, viewPort };
+      }
+
+      scheduleScrollVerify(lastSent, position = null) {
+        if (this.state.verifyTimeout) {
+          clearTimeout(this.state.verifyTimeout);
+        }
+        const VERIFY_DELAY_MS = 200;
+        const THRESHOLD_PX = 24;
+        this.state.verifyTimeout = setTimeout(() => {
+          const { scrollY, viewPort } = this.computeScrollParams(position);
+          const diffScroll = Math.abs(scrollY - lastSent.scrollY);
+          const diffView = Math.abs(viewPort - lastSent.viewPort);
+          if (diffScroll > THRESHOLD_PX || diffView > THRESHOLD_PX) {
+            this.postMessageToIframe({ type: 'scrollFromParent', scrollY, viewPort });
+          }
+        }, VERIFY_DELAY_MS);
       }
 
       setupScrollListener() {
@@ -1315,6 +1345,10 @@
       cleanup() {
         if (this.state.scrollTimeout) {
           clearTimeout(this.state.scrollTimeout);
+        }
+
+        if (this.state.verifyTimeout) {
+          clearTimeout(this.state.verifyTimeout);
         }
 
         if (this.scrollEndTimeout) {
