@@ -578,12 +578,16 @@
    * @param {string} config.target - CSS selector for target element
    * @param {boolean} config.scrollToTop - Enable scroll to top button
    * @param {number} config.marginTop - Cấu hình nếu khách sạn fix header thì sẽ tính toán chiều cao và nhập vào đây
+   * @param {string} config.hotelCode - Thêm khách sạn mặc định nếu không tìm thấy thông số
+   * @param {string} config.lang - Ngôn ngữ mặc định nếu không tìm thấy thông số
    */
   window.initBookingEngine = function (config = {}) {
     const {
       target,
       scrollToTop = false,
-      marginTop = 0
+      marginTop = 0,
+      hotelCode = '',
+      lang = ''
     } = config;
 
     if (!target) {
@@ -603,6 +607,8 @@
         this.scrollThreshold = 500;
         this.ezBeUrl = DEFAULT_EZ_BE_URL;
         this.marginTop = marginTop;
+        this.hotelCode = hotelCode;
+        this.lang = lang;
         this.state = {
           isInitialized: false,
           isLoading: true,
@@ -673,49 +679,74 @@
         }
       }
 
+      formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
       validateUrlParams() {
         const params = new URLSearchParams(window.location.search);
         if (params.get('call_back') && params.get('call_back') == '1' && params.get('hotel_code')) {
           this.elements.pathName = 'BePaymentDetail';
         } else {
           this.elements.pathName = 'BeDetailHotel';
-          const requiredParams = ['hotel_code', 'check_in', 'check_out', 'num_of_rooms', 'num_of_adults'];
-          for (const param of requiredParams) {
-            if (!params.get(param)) {
-              throw new Error(`Missing required parameter: ${param}`);
-            }
+        }
+        const hotelCode = params.get('hotel_code') || this.hotelCode || '';
+        if (!hotelCode) {
+          throw new Error(`Không tìm thấy mã khách sạn`);
+        }
+        
+        let checkIn = params.get('check_in');
+        let checkOut = params.get('check_out');
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+        if (!checkIn && !checkOut) {
+          checkIn = this.formatDate(today);
+          checkOut = this.formatDate(tomorrow);
+        } else if (checkIn && !checkOut) {
+          const inDate = new Date(checkIn);
+          const outDate = new Date(inDate);
+          outDate.setDate(inDate.getDate() + 1);
+          checkOut = this.formatDate(outDate);
+        } else if (!checkIn && checkOut) {
+          const outDate = new Date(checkOut);
+          const inDate = new Date(outDate);
+          inDate.setDate(outDate.getDate() - 1);
+
+          if (
+            this.formatDate(inDate) === this.formatDate(today) &&
+            this.formatDate(outDate) === this.formatDate(tomorrow)
+          ) {
+            checkIn = this.formatDate(inDate);
+            checkOut = this.formatDate(outDate);
+          } else {
+            checkIn = this.formatDate(today);
+            checkOut = this.formatDate(tomorrow);
           }
         }
 
-        params.set('mode', 'embed');
-        this.elements.params = params;
-        const currentUrl = new URL(window.location.href);
-        const baseUrl = currentUrl.origin + currentUrl.pathname;
-        const url = new URL(baseUrl);
-        url.searchParams.set('hotel_code', params.get('hotel_code'));
-        url.searchParams.set('call_back', '1');
-        url.searchParams.set('check_in', params.get('check_in'));
-        url.searchParams.set('check_out', params.get('check_out'));
-        url.searchParams.set('num_of_rooms', params.get('num_of_rooms'));
-        url.searchParams.set('num_of_adults', params.get('num_of_adults'));
-        url.searchParams.set('num_of_children', params.get('num_of_children'));
-        url.searchParams.set('promo_code', params.get('promo_code'));
-        url.searchParams.set('lang', this.validateLanguage(params.get('lang')));
-        this.elements.parentUrl = url.toString();
-
-        const urlParams = new URLSearchParams({
-          hotel_code: params.get('hotel_code'),
-          check_in: params.get('check_in'),
-          check_out: params.get('check_out'),
-          num_of_rooms: params.get('num_of_rooms'),
-          num_of_adults: params.get('num_of_adults'),
-          num_of_children: params.get('num_of_children'),
-          promo_code: params.get('promo_code'),
-          lang: this.validateLanguage(params.get('lang'))
-        });
-        const cleanUrl = `${window.location.origin + window.location.pathname}?${urlParams.toString()}`;
+        const baseParams = new URLSearchParams();
+        baseParams.set('hotel_code', hotelCode);
+        baseParams.set('check_in', checkIn);
+        baseParams.set('check_out', checkOut);
+        baseParams.set('num_of_rooms', params.get('num_of_rooms') || 1);
+        baseParams.set('num_of_adults', params.get('num_of_adults') || 1);
+        baseParams.set('num_of_children', params.get('num_of_children') || '');
+        baseParams.set('promo_code', params.get('promo_code') || '');
+        baseParams.set('lang', this.validateLanguage(params.get('lang') || this.lang || ''));
+        
+        const embedParams = new URLSearchParams(baseParams);
+        embedParams.set('mode', 'embed');
+        this.elements.params = embedParams;
+        const baseUrl = `${window.location.origin + window.location.pathname}`;
+        const callBackParams = new URLSearchParams(baseParams);
+        callBackParams.set('call_back', '1');
+        this.elements.parentUrl = `${baseUrl}?${callBackParams.toString()}`;
         // Xóa toàn bộ query params nếu thanh toán online trên URL trình duyệt
-        window.history.replaceState({}, document.title, cleanUrl);
+        window.history.replaceState({}, document.title, `${baseUrl}?${baseParams.toString()}`);
       }
 
       createLoadingState() {

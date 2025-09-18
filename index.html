@@ -262,6 +262,11 @@
 			</div>
 
 		</div>
+		<div style="display: flex; justify-content: end">
+			<button style="line-height: 38px; padding: 0 5px; background: #0dc487;">
+				<a style="text-decoration: none; color: #fff;" href="room-list.html">Trang đặt phòng mặc định</a>
+			</button>
+		</div>
 		<section id="gioi-thieu" class="section">
 			<h2>Hướng dẫn tích hợp Booking Engine vào website</h2>
 			<p>Chức năng này cho phép bạn tích hợp Booking Engine với website. Cụ thể là hiển thị form đặt phòng của Booking
@@ -372,7 +377,9 @@
 					&nbsp;&nbsp;window.initBookingEngine({
 						&nbsp;&nbsp;&nbsp;&nbsp;target: '#room-list',
 						&nbsp;&nbsp;&nbsp;&nbsp;scrollToTop: true,
-						&nbsp;&nbsp;&nbsp;&nbsp;marginTop: 0
+						&nbsp;&nbsp;&nbsp;&nbsp;marginTop: 0,
+						&nbsp;&nbsp;&nbsp;&nbsp;hotelCode: 'AFND',
+						&nbsp;&nbsp;&nbsp;&nbsp;lang: 'vi',
 					&nbsp;&nbsp;});
 				&lt;/script&gt;
 				</code></pre>
@@ -407,6 +414,18 @@
 							<td><code>Number</code></td>
 							<td>❌</td>
 							<td>Tạo khoảng cách với phía trên. Mục đích là tránh để nội dung bị che khuất bởi phần tử cố định phía trên. Ví dụ như website có header cố định</td>
+						</tr>
+						<tr>
+							<td><code>hotelCode</code></td>
+							<td><code>String</code></td>
+							<td>❌</td>
+							<td>Mã khách sạn mặc định hiển thị danh sách phòng nếu như không tìm thấy mã khách sạn trên đường dẫn. Phù hợp cho khách sạn (lẻ) muốn xem danh sách phòng mà không qua form tìm kiếm</td>
+						</tr>
+						<tr>
+							<td><code>lang</code></td>
+							<td><code>String</code></td>
+							<td>❌</td>
+							<td>Ngôn ngữ mặc định hiển thị danh sách phòng nếu không tìm thấy ngôn ngữ trên đường dẫn. Mặc định: tiếng việt (vi)</td>
 						</tr>
 					</tbody>
 				</table>
