@@ -688,11 +688,6 @@
 
       validateUrlParams() {
         const params = new URLSearchParams(window.location.search);
-        if (params.get('call_back') && params.get('call_back') == '1' && params.get('hotel_code')) {
-          this.elements.pathName = 'BePaymentDetail';
-        } else {
-          this.elements.pathName = 'BeDetailHotel';
-        }
         const hotelCode = params.get('hotel_code') || this.hotelCode || '';
         if (!hotelCode) {
           throw new Error(`Không tìm thấy mã khách sạn`);
@@ -738,13 +733,23 @@
         baseParams.set('promo_code', params.get('promo_code') || '');
         baseParams.set('lang', this.validateLanguage(params.get('lang') || this.lang || ''));
         
-        const embedParams = new URLSearchParams(baseParams);
-        embedParams.set('mode', 'embed');
-        this.elements.params = embedParams;
+        const isPaymentOnlineCallBack = params.get('call_back') && params.get('call_back') == '1' && params.get('hotel_code');
+        if (isPaymentOnlineCallBack) {
+          this.elements.pathName = 'BePaymentDetail';
+          const paymentParams = new URLSearchParams(window.location.search);
+          paymentParams.set('mode', 'embed');
+          paymentParams.delete("call_back")
+          this.elements.params = paymentParams;
+        } else {
+          this.elements.pathName = 'BeDetailHotel';
+          const embedParams = new URLSearchParams(baseParams);
+          embedParams.set('mode', 'embed');
+          this.elements.params = embedParams;
+        }
+
         const baseUrl = `${window.location.origin + window.location.pathname}`;
-        const callBackParams = new URLSearchParams(baseParams);
-        callBackParams.set('call_back', '1');
-        this.elements.parentUrl = `${baseUrl}?${callBackParams.toString()}`;
+        //truyền parrent url cho BE để xử lý thanh toán online
+        this.elements.parentUrl = `${baseUrl}?hotel_code=${hotelCode}&call_back=1`;
         // Xóa toàn bộ query params nếu thanh toán online trên URL trình duyệt
         window.history.replaceState({}, document.title, `${baseUrl}?${baseParams.toString()}`);
       }
