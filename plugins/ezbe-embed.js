@@ -731,15 +731,14 @@
         baseParams.set('num_of_adults', params.get('num_of_adults') || 1);
         baseParams.set('num_of_children', params.get('num_of_children') || '');
         baseParams.set('promo_code', params.get('promo_code') || '');
-        baseParams.set('lang', this.validateLanguage(params.get('lang') || this.lang || ''));
         
-        const isPaymentOnlineCallBack = params.get('call_back') && params.get('call_back') == '1' && params.get('hotel_code');
-        if (isPaymentOnlineCallBack) {
-          this.elements.pathName = 'BePaymentDetail';
-          const paymentParams = new URLSearchParams(window.location.search);
-          paymentParams.set('mode', 'embed');
-          paymentParams.delete("call_back")
-          this.elements.params = paymentParams;
+        const lang = this.validateLanguage(params.get('lang') || this.lang || '');
+        baseParams.set('lang', lang);
+        
+        const redirect = params.get('redirect');
+        if (redirect !== null && redirect.trim() !== "") {
+          this.elements.pathName = redirect.trim();
+          this.elements.params = params;
         } else {
           this.elements.pathName = 'BeDetailHotel';
           const embedParams = new URLSearchParams(baseParams);
@@ -749,7 +748,7 @@
 
         const baseUrl = `${window.location.origin + window.location.pathname}`;
         //truyền parrent url cho BE để xử lý thanh toán online
-        this.elements.parentUrl = `${baseUrl}?hotel_code=${hotelCode}&call_back=1`;
+        this.elements.parentUrl = `${baseUrl}?hotel_code=${hotelCode}&redirect=BePaymentDetail&mode=embed&lang=${lang}`;
         // Xóa toàn bộ query params nếu thanh toán online trên URL trình duyệt
         window.history.replaceState({}, document.title, `${baseUrl}?${baseParams.toString()}`);
       }
