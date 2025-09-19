@@ -738,6 +738,7 @@
         const redirect = params.get('redirect');
         if (redirect !== null && redirect.trim() !== "") {
           this.elements.pathName = redirect.trim();
+          params.set('mode', 'embed');
           this.elements.params = params;
         } else {
           this.elements.pathName = 'BeDetailHotel';
